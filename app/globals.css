@@ -1,26 +1,515 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paper world — exact values from Figma "Portfolio 2026" (node 53:422) */
+  --paper: #fffdf8;
+  --ink: #26201a;
+  --marigold: #fbb000;
+  --note: #a29a8e;
+  /* Blue world (the future) */
+  --blue: #7b94b5;
+  --cream: #f3eddd;
+  --coral: #ef9b76;
+  /* Shared */
+  --select: #bad6f5;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-marigold: var(--marigold);
+  --color-note: var(--note);
+  --color-blueworld: var(--blue);
+  --color-cream: var(--cream);
+  --color-coral: var(--coral);
+  --font-serif: var(--font-fraunces);
+  --font-mono: var(--font-space-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+::selection {
+  background: var(--select);
+  color: var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+/* ------------------------------------------------------------------ */
+/* Type voices (see docs/04-design-language.md)                        */
+/* ------------------------------------------------------------------ */
+
+/* Poster voice — the KURAE chunk. Declarative statements. */
+.voice-poster {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 720;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+
+/* Romantic voice — the PDF's marigold italic. Emotional lines. */
+.voice-romantic {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-weight: 560;
+  font-variation-settings: "opsz" 144, "SOFT" 55, "WONK" 0;
+  line-height: 1.04;
+  color: var(--marigold);
+}
+
+/* Label voice — everything meta: nav, captions, questions, asides. */
+.voice-label {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ */
+/* Motifs                                                              */
+/* ------------------------------------------------------------------ */
+
+/* Graph-grid background — the "mind" sections (beats 2–5) */
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--marigold) 14%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--marigold) 14%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 56px 56px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Halftoned photography.                                              */
+/* A dot screen only reads as ink-on-paper while its dots stay hard, so */
+/* these images must survive the trip to the screen unresampled:       */
+/*                                                                      */
+/*  1. `unoptimized` on the <Image> (not here, but it belongs with this) */
+/*     — next/image otherwise emits `w=1920 1x, w=3840 2x`. Our source  */
+/*     IS 1x, so on a retina screen the browser takes the 1229px file   */
+/*     as a 2x asset, calls its intrinsic width 614, and stretches it   */
+/*     back up. It also stops Next re-encoding a dot screen to lossy    */
+/*     WebP, which shreds it.                                           */
+/*  2. `image-rendering: pixelated` — the source is 1x and the art is   */
+/*     drawn at ~1218 CSS px, so on DPR 2 it MUST be upscaled ~2x.      */
+/*     Smooth interpolation blurs the dots into grey; nearest-neighbour */
+/*     keeps them crisp, which is the whole point of a halftone.        */
+/* The real fix is 2x halftone exports; until then, this is the best    */
+/* the 1x assets can look. See docs/05-build-plan.md.                   */
+/* ------------------------------------------------------------------ */
+.halftone {
+  image-rendering: pixelated;
+}
+
+/* Halftone placeholder — stands in for photos until real assets arrive */
+.halftone-ph {
+  background-color: color-mix(in srgb, var(--ink) 4%, var(--paper));
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--ink) 30%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 6px 6px;
+  border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* The design canvas — shared by every beat built 1:1 from Figma.      */
+/* The designs are a fixed 1728×991 canvas. `--u` is one design pixel, */
+/* sized so the whole canvas always fits the viewport, which makes it  */
+/* pixel-exact at 1728×991 and proportional everywhere else. Every     */
+/* number in the markup is therefore the literal Figma value.          */
+/* (.hero-* are Beat 1's original names, kept so it stays untouched.)  */
+/* ------------------------------------------------------------------ */
+.canvas-container,
+.hero-container {
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+
+.canvas-frame,
+.hero-frame {
+  --u: min(100cqw / 1728, 100cqh / 991);
+  position: relative;
+  width: calc(1728 * var(--u));
+  height: calc(991 * var(--u));
+}
+
+/* The same canvas, but for a beat that scrolls normally instead of pinning
+   (Beats 6+7). `--u` has to resolve to the SAME design pixel as the pinned
+   beats or the type would jump scale mid-story — the pinned ones sit in a
+   viewport-sized container, so their 100cqh is just 100vh. Here the container
+   is `inline-size` (its height is what we're computing), so the width comes
+   from the container — excluding the scrollbar, as `100vw` would not — and the
+   height from the viewport. The strip's own height is set per-beat. */
+.canvas-strip-wrap {
+  container-type: inline-size;
+}
+
+.canvas-strip {
+  --u: min(100cqw / 1728, 100vh / 991);
+  position: relative;
+  width: calc(1728 * var(--u));
+  margin-inline: auto;
+}
+
+/* The nav voice. Figma repeats it verbatim in the hero and in the closing
+   frames (53:632 / 63:422): Arial 20, pure #000 — not --ink. */
+.hero-nav,
+.canvas-nav {
   font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(20 * var(--u));
+  line-height: normal;
+  color: #000;
+}
+
+.hero-display {
+  font-family: "Times New Roman", Times, serif;
+  font-style: italic;
+  font-weight: 700;
+  line-height: normal;
+  color: var(--marigold);
+}
+
+/* "moving." is Times New Roman *Italic*, not Bold Italic. */
+.hero-display--regular {
+  font-weight: 400;
+}
+
+/* Figma trims this one text box to its cap height, so the box bottom is
+   the baseline and the y/g descenders hang below the row. */
+.hero-display--trim {
+  text-box: trim-both cap alphabetic;
+}
+
+/* ------------------------------------------------------------------ */
+/* The marigold statement voice.                                       */
+/* Figma sets it identically in every beat so far — Times New Roman     */
+/* Italic, emphasis words in Bold Italic — so one rule serves them all. */
+/* Each beat keeps its own class name for locality at the call site;    */
+/* add the next beat to these lists rather than copying the block.      */
+/* ------------------------------------------------------------------ */
+.beat2-display,
+.beat3-display,
+.beat5-display,
+.beat67-display {
+  font-family: "Times New Roman", Times, serif;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--marigold);
+}
+
+.beat2-display--bold,
+.beat3-display--bold,
+.beat5-display--bold,
+.beat67-display--bold {
+  font-weight: 700;
+}
+
+/* Figma trims these boxes to cap height, so the box bottom is the baseline —
+   that's what aligns "and the / ability to adapt / to anything." on one line
+   despite the 64/128px size jump, and what makes Beat 4's two-line block 116px
+   rather than 2×73.6. */
+.beat2-display--trim,
+.beat3-display--trim,
+.beat5-display--trim,
+.beat67-display--trim {
+  text-box: trim-both cap alphabetic;
+}
+
+/* ------------------------------------------------------------------ */
+/* Beat 5 — Figma node 53:590 + Shreeyash's two reference videos.      */
+/* ------------------------------------------------------------------ */
+
+/* The brand names are the one place Figma uses Times New Roman *upright*
+   Bold rather than the italic display voice. */
+.beat5-brand {
+  font-family: "Times New Roman", Times, serif;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--marigold);
+  text-box: trim-both cap alphabetic;
+  /* The whole wheel is one trick: transform-origin sits one radius to the
+     element's left, level with its middle, so a plain `rotation` tween carries
+     each name around the circle — no per-frame x/y maths, and it survives
+     resize because the origin is expressed in --u. The radius itself is set
+     inline from WHEEL_R in Beat5Proof.tsx, which owns that number. */
+}
+
+/* The conveyor. Cards carry no CSS rotation — the exports are pre-rotated. */
+.beat5-strip {
+  will-change: transform;
+}
+
+.beat5-project {
+  cursor: none; /* the name label below stands in for the cursor */
+}
+
+/* The cursor-following project name: Arial at 16 design px in black — the same
+   voice and size as Beat 2's floating questions, per Shreeyash. */
+.beat5-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(16 * var(--u));
+  line-height: normal;
+  color: #000;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  /* nudge clear of the pointer itself */
+  margin-left: calc(14 * var(--u));
+  margin-top: calc(10 * var(--u));
+}
+
+.beat5-cursor[data-on="1"] {
+  opacity: 1;
+}
+
+/* The fallback list reuses these classes but must not be positioned. */
+.beat5-cursor.static,
+.beat5-brand.static {
+  position: static;
+  opacity: 1;
+  transform: none;
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Beat 2 — a 1:1 rebuild of Figma node 53:470.                        */
+/* ------------------------------------------------------------------ */
+
+/* The working questions (Group 37). Figma positions each by its centre
+   and lowercases the source text. The outer span holds the position so
+   the inner one is free to scale on hover without fighting it. */
+.beat2-question {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+/* `block`, not `inline-block`: an inline-block would sit on the parent's text
+   baseline, and the strut's leading pushed every question 3px below its Figma
+   position. */
+.beat2-question__text {
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(16 * var(--u));
+  line-height: normal;
+  text-align: center;
+  text-transform: lowercase;
+  white-space: nowrap;
+  color: #000;
+  opacity: 0.2;
+  transform-origin: center center;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+}
+
+/* Curiosity rewards attention: the question magnifies under the pointer
+   and settles back when it leaves. */
+.beat2-question:hover .beat2-question__text {
+  transform: scale(1.5);
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beat2-question__text {
+    transition: none;
+    font-size: 0.8rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Beat 3 — a 1:1 rebuild of Figma node 53:490.                        */
+/* ------------------------------------------------------------------ */
+
+/* (.beat3-display* live in the shared marigold-voice block above.) */
+
+/* File-name captions. Figma lays these out edge-to-edge across the photo's
+   width — name left, number right — in Arial at the paper's gray. */
+.beat3-caption {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(20 * var(--u));
+  line-height: normal;
+  color: #b0b0b0;
+}
+
+/* The archive photos are pull-able objects. `will-change` keeps the spring-back
+   on the compositor; `touch-action: none` lets a drag beat the page scroll. */
+.beat3-photo {
+  cursor: grab;
+  touch-action: none;
+  will-change: transform;
+}
+
+.beat3-photo:active {
+  cursor: grabbing;
+}
+
+/* The inline glyph. Every icon is cut to the Porsche's 35px height in Figma and
+   keeps its own width, so they share the Porsche's bottom edge (its baseline)
+   and are centred across its box. Anchoring left instead would make a narrow
+   icon like the basketball hug the left edge and jump as the cycle turns over.
+   Safe to use `transform` here — GSAP only ever touches the [data-s1] wrapper. */
+.beat3-glyph {
+  position: absolute;
+  display: block;
+  z-index: 30;
+}
+
+.beat3-glyph__icon {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.beat3-glyph__icon[data-active] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beat3-glyph__icon {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Beat 0 — the splash (Figma 53:422).                                 */
+/* ------------------------------------------------------------------ */
+
+.beat0 {
+  transition:
+    opacity 900ms ease,
+    visibility 0s linear 900ms;
+}
+
+/* Faded out AND out of the way — otherwise it keeps swallowing every click. */
+.beat0--gone {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.beat0-display {
+  font-family: "Times New Roman", Times, serif;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+  color: #020108;
+}
+
+.beat0-display--trim {
+  text-box: trim-both cap alphabetic;
+}
+
+.beat0-enter {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-position: from-font;
+  transition: opacity 300ms ease;
+}
+
+.beat0-enter:hover {
+  opacity: 0.6;
+}
+
+/* The nav's sound toggle. Height matches the nav's own 23px line so it can sit
+   in a flex row next to "Story" without nudging it off its Figma y. */
+.nav-mute {
+  display: grid;
+  place-items: center;
+  height: calc(23 * var(--u));
+  width: calc(23 * var(--u));
+  color: #000;
+  cursor: pointer;
+}
+
+.nav-mute svg {
+  height: calc(19 * var(--u));
+  width: calc(19 * var(--u));
+}
+
+.nav-mute:hover {
+  opacity: 0.6;
+}
+
+/* ------------------------------------------------------------------ */
+/* Beat 8 — the close (Figma 53:632 / 63:422 / 63:407).                */
+/* ------------------------------------------------------------------ */
+
+/* The close is the one place the display type is NOT marigold: it sits on the
+   gradient/orange, so Figma sets it in near-black. */
+.beat8-display {
+  font-family: "Times New Roman", Times, serif;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+  color: #020108;
+}
+
+.beat8-display--bold {
+  font-weight: 700;
+}
+
+.beat8-display--trim {
+  text-box: trim-both cap alphabetic;
+}
+
+/* Footer credits — Arial on the black frame. */
+.beat8-footer {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(20 * var(--u));
+  line-height: normal;
+  color: #fffde2;
+}
+
+/* Dark halftone — the hero's full-bleed metaphoric portrait */
+.halftone-ph--dark {
+  background-color: var(--ink);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--paper) 42%, transparent) 1px,
+    transparent 1.4px
+  );
+  background-size: 7px 7px;
+  border: none;
+}
+
+/* Print grain — blue world texture */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The one-time selection-highlight moment (KURAE motif) */
+.select-moment {
+  background: var(--select);
+  box-shadow: 0 0 0 2px var(--select);
 }

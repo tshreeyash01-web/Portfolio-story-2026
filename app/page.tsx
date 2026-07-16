@@ -1,65 +1,32 @@
-import Image from "next/image";
+/**
+ * Beats 1–5 are built from Figma (nodes 53:422, 53:470, 53:490, 53:584 and
+ * 53:590). Beats 6–8 are still the static skeleton — each gets built in turn.
+ * Source of truth: docs/02-beats.md + docs/04-design-language.md
+ *
+ * Beats 4 and 5 share ONE pinned section (Beat5Proof): the "Adaptability"
+ * statement has to travel from Beat 4's centre to Beat 5's right-hand slot, and
+ * two separate pins can't hand an element over. See docs/05-build-plan.md.
+ *
+ * The nav lives inside Beat1Hero because the Figma frame owns it. A
+ * persistent nav across the later beats is still an open decision.
+ */
+
+import Beat1Hero from "./components/beats/Beat1Hero";
+import Beat2TwoThings from "./components/beats/Beat2TwoThings";
+import Beat3Archive from "./components/beats/Beat3Archive";
+import Beat5Proof from "./components/beats/Beat5Proof";
+import Beat67PeoplePresent from "./components/beats/Beat67PeoplePresent";
+import Beat8Now from "./components/beats/Beat8Now";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="relative">
+      <Beat1Hero />
+      <Beat2TwoThings />
+      <Beat3Archive />
+      <Beat5Proof />
+      <Beat67PeoplePresent />
+      <Beat8Now />
+    </main>
   );
 }
