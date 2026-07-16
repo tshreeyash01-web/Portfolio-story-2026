@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { asset } from "../../lib/asset";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -138,7 +139,7 @@ export default function Beat2TwoThings() {
             }}
           >
             <Image
-              src="/beat2/grid.svg"
+              src={asset("/beat2/grid.svg")}
               alt=""
               width={GRID.w}
               height={GRID.h}

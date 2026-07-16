@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { asset } from "../lib/asset";
 
 /**
  * The site's one audio track, plus the splash's "entered" state.
@@ -73,7 +74,15 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AudioCtx.Provider value={value}>
-      <audio ref={ref} src="/audio/veridis-quo.mp3" loop preload="auto" />
+      {/* next/image applies basePath itself, but a plain <audio src> doesn't —
+          on GitHub Pages the site lives under /Portfolio-story-2026/, so this
+          one has to prefix itself or the track 404s. Empty at the root. */}
+      <audio
+        ref={ref}
+        src={asset("/audio/veridis-quo.mp3")}
+        loop
+        preload="auto"
+      />
       {children}
     </AudioCtx.Provider>
   );

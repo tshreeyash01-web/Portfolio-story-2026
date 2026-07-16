@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { asset } from "../../lib/asset";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -327,7 +328,7 @@ export default function Beat5Proof() {
             className="absolute z-0"
             style={{ left: u(GRID.x), top: u(GRID.y), width: u(GRID.w), height: u(GRID.h) }}
           >
-            <Image src="/beat4/grid.svg" alt="" width={GRID.w} height={GRID.h} className="h-full w-full" />
+            <Image src={asset("/beat4/grid.svg")} alt="" width={GRID.w} height={GRID.h} className="h-full w-full" />
           </div>
 
           {/* ---- A: the wheel (Frame 113). Grouped so it can fade as one —
@@ -385,7 +386,7 @@ export default function Beat5Proof() {
                 }}
               >
                 <Image
-                  src={p.src}
+                  src={asset(p.src)}
                   alt={p.name}
                   fill
                   sizes="30vw"
@@ -422,7 +423,7 @@ export default function Beat5Proof() {
           {PROJECTS.map((p) => (
             <figure key={p.name} className="w-64">
               <div className="relative w-full" style={{ aspectRatio: `${CARD.w} / ${CARD.h}` }}>
-                <Image src={p.src} alt={p.name} fill sizes="16rem" className="object-cover" />
+                <Image src={asset(p.src)} alt={p.name} fill sizes="16rem" className="object-cover" />
               </div>
               <figcaption className="beat5-cursor static block">{p.name}</figcaption>
             </figure>

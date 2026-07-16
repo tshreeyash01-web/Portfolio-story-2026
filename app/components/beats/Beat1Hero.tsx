@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { scrollToTop } from "../../lib/scroll";
 import MuteToggle from "../MuteToggle";
+import { asset } from "../../lib/asset";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -290,7 +291,7 @@ export default function Beat1Hero() {
               style={{ left: u(b.x), top: u(b.y), width: u(BAR_W), height: u(b.h) }}
             >
               <Image
-                src={b.src}
+                src={asset(b.src)}
                 alt={b.alt}
                 width={BAR_W}
                 height={b.h}
@@ -385,7 +386,7 @@ export default function Beat1Hero() {
             style={{ left: u(BLOCK.x), top: u(BLOCK.y), width: u(BLOCK.w), height: u(BLOCK.h) }}
           >
             <Image
-              src="/hero/change.png"
+              src={asset("/hero/change.png")}
               alt="A long-exposure figure blurred into motion"
               width={BLOCK.w}
               height={BLOCK.h}

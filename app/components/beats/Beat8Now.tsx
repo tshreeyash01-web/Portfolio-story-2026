@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { scrollToTop } from "../../lib/scroll";
 import MuteToggle from "../MuteToggle";
+import { asset } from "../../lib/asset";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -156,7 +157,7 @@ export default function Beat8Now() {
             style={{ left: u(ME.x), top: u(ME.y), width: u(ME.w), height: u(ME.h) }}
           >
             <Image
-              src="/beat8/me.jpg"
+              src={asset("/beat8/me.jpg")}
               alt="Shreeyash on a mountain above Innsbruck, looking out over the valley"
               fill
               sizes="72vw"

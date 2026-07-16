@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Draggable } from "gsap/Draggable";
 import { useGSAP } from "@gsap/react";
+import { asset } from "../../lib/asset";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, Draggable);
 
@@ -190,7 +191,7 @@ export default function Beat3Archive() {
           data-active={i === icon ? "" : undefined}
           style={{ width: u(ic.w), height: u(ic.h) }}
         >
-          <Image src={ic.src} alt={i === icon ? ic.alt : ""} width={ic.natW} height={ic.natH} className="h-full w-full" />
+          <Image src={asset(ic.src)} alt={i === icon ? ic.alt : ""} width={ic.natW} height={ic.natH} className="h-full w-full" />
         </span>
       ))}
     </span>
@@ -210,7 +211,7 @@ export default function Beat3Archive() {
             className="absolute z-0"
             style={{ left: u(GRID.x), top: u(GRID.y), width: u(GRID.w), height: u(GRID.h) }}
           >
-            <Image src="/beat3/grid.svg" alt="" width={GRID.w} height={GRID.h} className="h-full w-full" />
+            <Image src={asset("/beat3/grid.svg")} alt="" width={GRID.w} height={GRID.h} className="h-full w-full" />
           </div>
 
           {/* Frame 105 — the archive. Constant across both states; only ever
@@ -235,7 +236,7 @@ export default function Beat3Archive() {
                         were resampling the dot screens away (a 120px box was
                         being served a 48px file). See .halftone in globals.css. */}
                     <Image
-                      src={p.src}
+                      src={asset(p.src)}
                       alt={p.alt}
                       fill
                       sizes="25vw"
@@ -320,7 +321,7 @@ export default function Beat3Archive() {
           {PHOTOS.map((p) => (
             <figure key={p.n} className="w-40">
               <div className="relative w-full" style={{ aspectRatio: p.aspect }}>
-                <Image src={p.src} alt={p.alt} fill sizes="10rem" className="object-contain" />
+                <Image src={asset(p.src)} alt={p.alt} fill sizes="10rem" className="object-contain" />
               </div>
               <figcaption className="beat3-caption flex justify-between">
                 <span>Png_File</span>

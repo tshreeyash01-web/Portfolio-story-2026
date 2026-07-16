@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { asset } from "../../lib/asset";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -127,7 +128,7 @@ export default function Beat67PeoplePresent() {
           style={{ left: u(CROWD.x), top: u(CROWD.y), width: u(CROWD.w), height: u(CROWD.h) }}
         >
           <Image
-            src="/beat67/crowd.jpg"
+            src={asset("/beat67/crowd.jpg")}
             alt="A crowd of figures blurred into ghosts as they walk"
             fill
             sizes="65vw"
@@ -188,7 +189,7 @@ export default function Beat67PeoplePresent() {
               className="relative shrink-0"
               style={{ width: u(SHOTS.cw), height: u(SHOTS.h) }}
             >
-              <Image src={p.src} alt={p.alt} fill sizes="20vw" className="object-cover" />
+              <Image src={asset(p.src)} alt={p.alt} fill sizes="20vw" className="object-cover" />
             </div>
           ))}
         </div>
@@ -224,7 +225,7 @@ export default function Beat67PeoplePresent() {
           <span className="beat67-display--bold">drives design</span>.
         </p>
         <div className="relative mx-auto aspect-[1089/627] w-full max-w-4xl">
-          <Image src="/beat67/crowd.jpg" alt="A crowd of figures blurred into ghosts as they walk" fill sizes="56rem" className="object-cover" />
+          <Image src={asset("/beat67/crowd.jpg")} alt="A crowd of figures blurred into ghosts as they walk" fill sizes="56rem" className="object-cover" />
         </div>
         <p className="beat67-display mx-auto max-w-4xl text-center text-3xl md:text-5xl">
           <span className="beat67-display--bold">How to read people</span> and{" "}
@@ -238,7 +239,7 @@ export default function Beat67PeoplePresent() {
         <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 opacity-90">
           {PORTRAITS.map((p) => (
             <div key={p.src} className="relative aspect-[335/466] w-56">
-              <Image src={p.src} alt={p.alt} fill sizes="14rem" className="object-cover" />
+              <Image src={asset(p.src)} alt={p.alt} fill sizes="14rem" className="object-cover" />
             </div>
           ))}
         </div>
